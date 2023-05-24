@@ -77,7 +77,6 @@ def activate(request, uidb64, token):
         user.save()
         print('saved')
 
-
         return HttpResponseRedirect('http://localhost:3000/login')
         # return Response({"msg": "activated"})
         
