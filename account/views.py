@@ -87,6 +87,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Add custom claims
+        token['email'] = user.email
         token['username'] = user.username
         token['is_staff'] = user.is_staff
         token['is_admin'] = user.is_superadmin 
@@ -95,3 +96,68 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+    
+    
+
+class ForgotPassword(APIView):
+    def post(self, request, format=None):
+        email = request.data.get('email')
+
+        if User.objects.filter(email=email).exists:
+            user = User.objects.get(email__exact=email)
+
+            current_site = get_current_site(request)
+            mail_subject = 'Reset Your Password'
+            message = render_to_string('reset_password_email.html', {
+                'user': user,
+                'domain': current_site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+            to_email = email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+
+            return Response({'msg':'Please Reset Password In The Link', 'user_id':user.id})
+        
+        return Response({'msg': 'No Account Registered With This Email'})
+    
+    
+@api_view(['GET'])    
+def reset_validate(request, uidb64, token):
+    
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk = uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        request.session['uid'] = uid
+
+        sessionid = request.session.get('uid')
+        print(sessionid)
+
+        return HttpResponseRedirect('http://localhost:3000/reset-password/')
+    
+    return Response({'msg': 'Link Expired or Invalid Token'})
+
+
+class ResetPassword(APIView):
+    def post(self, request, format=None):
+        
+        str_user_id = request.data.get('user_id')
+        user_id = int(str_user_id)
+        password = request.data.get('password')
+        
+        print(user_id)
+        if user_id :
+            
+            user = User.objects.get(pk=user_id)
+            user.set_password(password)
+            user.save()
+            print('saved')
+
+            return Response({'msg': 'Password Updated Successfully'})
+    
+        return HttpResponseRedirect('http://localhost:3000/reset-password')
