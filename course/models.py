@@ -17,28 +17,22 @@ class SubCat(models.Model):
 
 
 
+
 class Course(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    title = models.CharField(max_length=30,null=False)
-    subtitle = models.CharField(max_length=30,null=False)
-    description = models.CharField(max_length=100,null=False)
+    title = models.CharField(max_length=500,null=False)
+    subtitle = models.CharField(max_length=600,null=False)
+    description = models.CharField(max_length=600,null=False)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     sub_category = models.ForeignKey(SubCat,on_delete=models.CASCADE)
     image = models.ImageField(upload_to='photos/course')
     video = models.FileField(upload_to='photos/course')
     is_active = models.BooleanField(default=True)
-    welcomemsg = models.CharField(max_length=50,null=False)
-    endmsg = models.CharField(max_length=50,null=False)
+    welcomemsg = models.CharField(max_length=500,null=False)
+    endmsg = models.CharField(max_length=500,null=False)
     price = models.IntegerField()
     saleprice = models.IntegerField()
     
-class Session(models.Model):
-    course = models.ForeignKey(Course,on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
-    description = models.CharField(max_length=50)
-    
-class Lecture(models.Model):
-    session = models.ForeignKey(Session,on_delete=models.CASCADE)
     
     
 

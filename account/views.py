@@ -5,9 +5,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer,CourseSerializer
 from account.models import User
+from course.models import Course
 
+from rest_framework.generics import ListCreateAPIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -161,3 +163,33 @@ class ResetPassword(APIView):
             return Response({'msg': 'Password Updated Successfully'})
     
         return HttpResponseRedirect('http://localhost:3000/reset-password')
+    
+
+class Listuser(ListCreateAPIView):
+    queryset = User.objects.filter(is_admin=False)
+    serializer_class = UserSerializer
+    
+    
+class Blockuser(APIView):
+    def get(self, request, pk):
+        user = User.objects.get(id=pk)
+        print(user.is_active)
+        user.is_active = not user.is_active
+        user.save()
+        return Response({'msg': 200})
+    
+class Singlecourse(APIView):
+    def get(self, request, pk):
+        query = Course.objects.get(id=pk)
+        serializer = CourseSerializer(query)
+        return Response(serializer.data) 
+    
+class Singleuser(APIView):
+    def get(self, request, pk):
+        query = Course.objects.get(id=pk)
+        user = query.user
+        query1 = User.objects.get(username=user)
+        serializer = UserSerializer(query1)
+        return Response(serializer.data) 
+    
+    

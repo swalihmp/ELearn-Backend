@@ -8,5 +8,6 @@ urlpatterns = [
     path('api/', include('account.urls')),
     path('courses/',include('course.urls')),
     path('instruct/',include('instructor.urls')),
+    path('csession/',include('csession.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

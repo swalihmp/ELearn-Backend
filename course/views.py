@@ -12,7 +12,6 @@ from .serializers import CourseSerializer,CategorySerializer
 
 # Create your views here.
 
-
 class Course(ListCreateAPIView):
     queryset = Course.objects.filter(is_active=True)
     serializer_class = CourseSerializer
@@ -20,3 +19,5 @@ class Course(ListCreateAPIView):
 class Category(ListCreateAPIView):
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer
+    
+    
