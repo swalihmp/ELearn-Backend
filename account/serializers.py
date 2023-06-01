@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from account.models import User
-from course.models import Course
+from course.models import Course,Category
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,4 +19,16 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
         
+        
+class AddCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        
+        
+class InstructorCourseSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = Course
+        fields = '__all__'
         

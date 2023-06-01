@@ -4,18 +4,16 @@ from account.models import User
 # Create your models here.
 
 class Category(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=50)
+    name = models.CharField(max_length=700)
+    description = models.CharField(max_length=600)
     image = models.ImageField(upload_to='photos/categ')
     is_active = models.BooleanField(default=False)
     
 class SubCat(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=50)
+    name = models.CharField(max_length=700)
+    description = models.CharField(max_length=700)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     is_active = models.BooleanField(default=False)
-
-
 
 
 class Course(models.Model):

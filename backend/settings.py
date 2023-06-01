@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'course',
     'instructor',
     'csession',
+    'cart',
     
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',

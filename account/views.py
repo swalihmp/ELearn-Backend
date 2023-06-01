@@ -5,9 +5,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from .serializers import UserSerializer,CourseSerializer
+from .serializers import UserSerializer,CourseSerializer,AddCategorySerializer,InstructorCourseSerializer
 from account.models import User
-from course.models import Course
+from course.models import Course,Category
+from course.serializers import CategorySerializer
+
 
 from rest_framework.generics import ListCreateAPIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -191,5 +193,87 @@ class Singleuser(APIView):
         query1 = User.objects.get(username=user)
         serializer = UserSerializer(query1)
         return Response(serializer.data) 
+    
+
+class CreateCategory(APIView):
+    def post(self, request, format=None):
+        serializer = AddCategorySerializer(data=request.data)
+        print(request.data)
+        is_valid = serializer.is_valid()
+        print(serializer.errors)
+
+        if serializer.is_valid():
+            serializer.save()
+            cat = Category.objects.last()
+            cat.is_active = True
+            cat.save()
+            return Response({'msg': 200})
+        else :
+            return Response({'msg': 404})
+        
+class Singlecat(APIView):
+    def get(self, request, id):
+        
+        query = Category.objects.get(id=id)
+        serializer = AddCategorySerializer(query)
+        return Response(serializer.data) 
+    
+    def put(self, request, id):
+        try:
+            queryset = Category.objects.get(id=id)
+        except:
+            Category.DoesNotExist
+            return Response({'msg': 404})
+        if queryset:
+            if request.data.get('image')== 'null':
+                name = request.data.get('name')
+                description = request.data.get('description')
+                
+                queryset.name = name
+                queryset.description = description 
+                queryset.save()
+                
+                return Response({'msg': 200})
+            else:
+                name = request.data.get('name')
+                description = request.data.get('description')
+                image = request.data.get('image')
+                
+                queryset.name = name
+                queryset.description = description 
+                queryset.image = image
+                queryset.save()
+                
+                return Response({'msg': 200})
+        else:
+            return Response({'msg': 500})
+
+
+class BlockCat(APIView):
+    def get(self, request, pk):
+        category = Category.objects.get(id=pk)
+        
+        category.is_active = not category.is_active
+        category.save()
+        return Response({'msg': 200})
+    
+class AllCategory(ListCreateAPIView):
+    queryset = Category.objects.filter()
+    serializer_class = CategorySerializer
+    
+    
+    
+class InstructorCourse(APIView):
+    def get(self, request, pk):
+        print(pk)
+        courses = Course.objects.filter(user=pk)
+        print(courses)
+        serializer = InstructorCourseSerializer(courses, many=True)
+        # return Response({'msg':200})
+        # query = Course.objects.get(id=pk)
+        # serializer = CourseSerializer(query)
+        return Response(serializer.data) 
+    
+
     
     
