@@ -16,4 +16,5 @@ class Lecture(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     title = models.CharField(max_length=600)
     description = models.CharField(max_length=600)
-    content = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    material = models.FileField(upload_to='photos/course',null=True)

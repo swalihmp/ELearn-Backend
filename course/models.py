@@ -13,7 +13,7 @@ class SubCat(models.Model):
     name = models.CharField(max_length=700)
     description = models.CharField(max_length=700)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
 
 class Course(models.Model):
@@ -25,7 +25,7 @@ class Course(models.Model):
     sub_category = models.ForeignKey(SubCat,on_delete=models.CASCADE)
     image = models.ImageField(upload_to='photos/course')
     video = models.FileField(upload_to='photos/course')
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     welcomemsg = models.CharField(max_length=500,null=False)
     endmsg = models.CharField(max_length=500,null=False)
     price = models.IntegerField()

@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view
 
 from .serializers import UserSerializer,CourseSerializer,AddCategorySerializer,InstructorCourseSerializer
 from account.models import User
-from course.models import Course,Category
-from course.serializers import CategorySerializer
+from course.models import Course,Category,SubCat
+from course.serializers import CategorySerializer,SubcategorySerializer
 
 
 from rest_framework.generics import ListCreateAPIView
@@ -210,6 +210,8 @@ class CreateCategory(APIView):
             return Response({'msg': 200})
         else :
             return Response({'msg': 404})
+  
+  
         
 class Singlecat(APIView):
     def get(self, request, id):
@@ -257,6 +259,15 @@ class BlockCat(APIView):
         category.save()
         return Response({'msg': 200})
     
+
+class BlockSubcat(APIView):
+    def get(self, request, pk):
+        subcategory = SubCat.objects.get(id=pk)
+        
+        subcategory.is_active = not subcategory.is_active
+        subcategory.save()
+        return Response({'msg': 200})
+    
 class AllCategory(ListCreateAPIView):
     queryset = Category.objects.filter()
     serializer_class = CategorySerializer
@@ -265,15 +276,22 @@ class AllCategory(ListCreateAPIView):
     
 class InstructorCourse(APIView):
     def get(self, request, pk):
-        print(pk)
         courses = Course.objects.filter(user=pk)
-        print(courses)
         serializer = InstructorCourseSerializer(courses, many=True)
-        # return Response({'msg':200})
-        # query = Course.objects.get(id=pk)
-        # serializer = CourseSerializer(query)
         return Response(serializer.data) 
     
+    
+class PendingCourse(APIView):
+    def get(self, request, pk):
+        courses = Course.objects.filter(user=pk,is_active=False)
+        serializer = InstructorCourseSerializer(courses, many=True)
+        return Response(serializer.data) 
 
+
+class ApprovedCourse(APIView):
+    def get(self, request, pk):
+        courses = Course.objects.filter(user=pk,is_active=True)
+        serializer = InstructorCourseSerializer(courses, many=True)
+        return Response(serializer.data) 
     
     

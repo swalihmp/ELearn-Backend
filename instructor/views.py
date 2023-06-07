@@ -2,11 +2,13 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from account.models import User
+from .models import Instructor
 
 
 
+from rest_framework.generics import ListCreateAPIView
+from .serializers import OnboardSerializer,InstructorSerializer
 
-from .serializers import OnboardSerializer
 
 # Create your views here.
 
@@ -30,3 +32,9 @@ class Onboard(APIView):
         else :
             print('False')
             return Response({'msg': 404})
+        
+        
+
+class Instructors(ListCreateAPIView):
+    queryset = Instructor.objects.all()
+    serializer_class = InstructorSerializer

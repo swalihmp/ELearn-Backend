@@ -13,6 +13,7 @@ class Course(ListCreateAPIView):
     queryset = Course.objects.filter(is_active=True)
     serializer_class = CourseSerializer
     
+        
 class Category(ListCreateAPIView):
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer

@@ -32,7 +32,16 @@ class CartView(APIView):
 class GetCartView(APIView):
     def get(self, request, pk):
         cart = Cart.objects.filter(user=pk)
-        print(cart)
         serializer = GetCartSerializer(cart, many=True)
         
         return Response(serializer.data)
+    
+class RemoveCart(APIView):
+    def delete(self, request, pk):
+        try:
+            cart = Cart.objects.get(id=pk)
+            cart.delete()
+            return Response({'msg': 200})
+        except:
+            cart.DoesNotExist
+            return Response({'msg': 500})
