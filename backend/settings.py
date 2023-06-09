@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'instructor',
     'csession',
     'cart',
+    'payment',
     
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
@@ -209,6 +210,6 @@ MEDIA_URL = '/media/'
 
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_PORT= 587
-EMAIL_HOST_USER='swalihmp8@gmail.com'
-EMAIL_HOST_PASSWORD='#'
+EMAIL_HOST_USER='swalihmp438368@gmail.com'
+EMAIL_HOST_PASSWORD='atylboegllkhewew'
 EMAIL_USE_TLS=True

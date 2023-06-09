@@ -26,6 +26,8 @@ class Course(models.Model):
     image = models.ImageField(upload_to='photos/course')
     video = models.FileField(upload_to='photos/course')
     is_active = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
+    reason = models.CharField(max_length=600,null=True,default='')
     welcomemsg = models.CharField(max_length=500,null=False)
     endmsg = models.CharField(max_length=500,null=False)
     price = models.IntegerField()

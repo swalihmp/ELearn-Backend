@@ -3,11 +3,21 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from .models import Sessions,Lecture
+from account.models import User
 from course.models import Course
 from .serializers import SessionsSerializer,LectureSerializer,SubCategorySerializer,CreateCourseSerializer,CourseSerializer
 from course.serializers import CreateSubcategory
 from course.models import Category,SubCat
 
+
+
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMessage
 # Create your views here.
 
 
@@ -48,6 +58,27 @@ class CreareCourse(APIView):
 
         if serializer.is_valid():
             serializer.save()
+            
+            user = request.data['user']
+            current_user = User.objects.get(id=user)
+            email = 'swalihmp438368@gmail.com'
+            
+            current_site = get_current_site(request)
+            
+            mail_subject = 'New Course Created'
+            
+            message = render_to_string('admin_alert_email.html', {
+                'user': current_user,
+                'domain': current_site,
+                'usename': urlsafe_base64_encode(force_bytes(current_user.username)),
+                'title' : request.data['title']
+            })
+            to_email = email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+            
+
+            
             return Response({'msg': 200})
         else :
             return Response({'msg': 404})
@@ -87,6 +118,38 @@ class BlockCourse(APIView):
         course.save()
         return Response({'msg': 200})
     
+    
+class RejectCourse(APIView):
+    def get(self, request, msg,id):
+        print(msg,id)
+        
+        
+        course = Course.objects.get(id=id)
+        
+        email = course.user.email
+        
+        current_site = get_current_site(request)
+        
+        mail_subject = 'Course Rejected....'
+        
+        message = render_to_string('user_alert_email.html', {
+            'course': course,
+            'course_name' : course.title,
+            'msg':msg,
+            'domain': current_site,
+            'usename': urlsafe_base64_encode(force_bytes(course.user.username)),
+        })
+        to_email = email
+        send_email = EmailMessage(mail_subject, message, to=[to_email])
+        send_email.send()
+        
+        course.is_rejected = True
+        course.reason = msg
+        course.save()        
+        
+        
+        return Response({'msg': 200})
+    
 
 class AllSubCategory(ListCreateAPIView):
     queryset = SubCat.objects.filter()
@@ -105,3 +168,19 @@ class CreateSubCategory(APIView):
             return Response({'msg': 200})
         else :
             return Response({'msg': 404})
+        
+        
+class SearchCourse(APIView):
+    
+    def get(self, request, data):
+        courses = Course.objects.filter(title__icontains=data,is_active=True)
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data) 
+    
+    
+class Courses(APIView):
+    def get(self,request):
+        courses = Course.objects.filter(is_active=True)
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+        

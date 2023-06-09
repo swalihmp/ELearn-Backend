@@ -33,6 +33,7 @@ def getRoutes(request):
     return Response(routes)
 
 
+
 class UserRegistration(APIView):
      def post(self, request, format=None):
         email = request.data.get('email')
@@ -94,7 +95,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email
         token['username'] = user.username
         token['is_staff'] = user.is_staff
-        token['is_admin'] = user.is_superadmin 
+        token['is_admin'] = user.is_superadmin
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
 
         return token
 

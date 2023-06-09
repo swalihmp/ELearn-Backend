@@ -4,11 +4,12 @@ from django.conf import settings
 from . import views
 from .views import Course,Category
 from account.views import Singlecourse,Singleuser,CreateCategory,Singlecat,BlockCat,AllCategory,InstructorCourse,BlockSubcat,PendingCourse,ApprovedCourse
-from csession.views import SubCategory,CreareCourse,AllCourse,BlockCourse,AllSubCategory,CreateSubCategory
+from csession.views import SubCategory,CreareCourse,AllCourse,BlockCourse,AllSubCategory,CreateSubCategory,RejectCourse,SearchCourse,Courses
 
 
 urlpatterns = [
-    path('course/', Course.as_view(), name='course'),
+    path('course/', Courses.as_view(), name='course'),
+    path('search/<str:data>',SearchCourse.as_view(),name='search'),
     path('allcourse/', AllCourse.as_view(), name='allcourse'),
     path('instructorcourse/<int:pk>',InstructorCourse.as_view(),name='instructorcourse'),
     path('category/',Category.as_view(), name='category'),
@@ -24,6 +25,7 @@ urlpatterns = [
     path('blockcategory/<int:pk>',BlockCat.as_view(),name='blockcategory'),
     path('blocksubcategory/<int:pk>',BlockSubcat.as_view(),name='blocksubcategory'),
     path('blockcourse/<int:pk>',BlockCourse.as_view(),name='blockcourse'),
+    path('rejectcourse/<str:msg>/<int:id>',RejectCourse.as_view(), name='rejectcourse'),
     path('pendingcourse/<int:pk>',PendingCourse.as_view(),name='pendingcourse'),
     path('aprovedcourse/<int:pk>',ApprovedCourse.as_view(),name='aprovedcourse'),
     
