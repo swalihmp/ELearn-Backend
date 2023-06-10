@@ -1,5 +1,6 @@
 from django.db import models
 from account.models import User
+from payment.models import Order
 
 # Create your models here.
 
@@ -33,6 +34,11 @@ class Course(models.Model):
     price = models.IntegerField()
     saleprice = models.IntegerField()
     
-    
+
+class EnrolledCourse(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    course = models.ForeignKey(Course,on_delete=models.CASCADE)
+    order_id = models.ForeignKey(Order,on_delete=models.CASCADE)   
+    progress = models.CharField(max_length=500,default=0)
     
 
