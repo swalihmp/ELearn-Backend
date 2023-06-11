@@ -4,7 +4,7 @@ from django.conf import settings
 from . import views
 from .views import Course,Category
 from account.views import Singlecourse,Singleuser,CreateCategory,Singlecat,BlockCat,AllCategory,InstructorCourse,BlockSubcat,PendingCourse,ApprovedCourse
-from csession.views import SubCategory,CreareCourse,AllCourse,BlockCourse,AllSubCategory,CreateSubCategory,RejectCourse,SearchCourse,Courses
+from csession.views import SubCategory,CreareCourse,AllCourse,BlockCourse,AllSubCategory,CreateSubCategory,RejectCourse,SearchCourse,Courses,UpdateCourse
 
 
 urlpatterns = [
@@ -28,5 +28,6 @@ urlpatterns = [
     path('rejectcourse/<str:msg>/<int:id>',RejectCourse.as_view(), name='rejectcourse'),
     path('pendingcourse/<int:pk>',PendingCourse.as_view(),name='pendingcourse'),
     path('aprovedcourse/<int:pk>',ApprovedCourse.as_view(),name='aprovedcourse'),
+    path('updatecourse/<int:pk>',UpdateCourse.as_view(),name='UpdateCourse'),
     
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

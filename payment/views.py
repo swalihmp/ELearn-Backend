@@ -8,9 +8,10 @@ from account.models import User
 from datetime import datetime
 from cart.models import Cart
 from course.models import EnrolledCourse
+import uuid
 
 from .models import Order
-from .serializers import OrderSerializer,EnrolledCourseSerializer
+from .serializers import OrderSerializer,EnrolledCourseSerializer,EnrolledSerializer,GetOrderSerializer
 # Create your views here.
 
 class start_payment(APIView):
@@ -30,7 +31,14 @@ class start_payment(APIView):
         payment = client.order.create({"amount": int(amount) * 100, 
                                     "currency": "INR", 
                                     "payment_capture": "1"})
-
+        
+        
+        cart = Cart.objects.filter(user=user)
+        
+        total =0
+        for i in range(len(cart)):
+            x = cart[i].course.saleprice
+            total = total+x
 
         order = Order.objects.create(order_user=user, 
                                     order_amount=amount, 
@@ -38,6 +46,7 @@ class start_payment(APIView):
                                     order_date= datetime.now().date(),
                                     firtname = request.data['fname'],
                                     lastname = request.data['lname'],
+                                    sub_total = total,
                                     addrress1 = request.data['address1'],
                                     addrress2 = request.data['address2'],
                                     email = request.data['email'],
@@ -46,6 +55,11 @@ class start_payment(APIView):
                                     discount = request.data['discount'],)
 
         serializer = OrderSerializer(order)
+        
+        order_number = uuid.uuid4().hex[:10].upper()
+        
+        order.order_id = order_number
+        order.save()
 
         """order response will be 
         {'id': 17, 
@@ -120,11 +134,47 @@ class handle_payment_success(APIView):
             )
             serializer = EnrolledCourseSerializer(course)
             
+        # courses = EnrolledCourse.objects.filter(order_id=order)
+        # serializers = EnrolledSerializer(courses, many=True)
+        
+        # orders = Order.objects.get(order_payment_id=ord_id)
+        # orderserializer = OrderSerializer(orders)
+            
         # Cart.objects.filter(user=user).delete()
+        
 
         res_data = {
-            'message': 'payment successfully received!'
+            'message': 'payment successfully received!',
+            'order_id' : ord_id
         }
 
         return Response(res_data)
         
+
+
+class OrderView(APIView):
+    def get(self, request, msg):
+        orders = Order.objects.get(order_payment_id=msg)
+        orderserializer = OrderSerializer(orders)
+        print(orderserializer.data)
+        print(msg)
+        return Response(orderserializer.data)
+    
+    
+class GetCourse(APIView):
+    def get(self, request, msg):
+        orders = Order.objects.get(order_payment_id=msg)
+        course = EnrolledCourse.objects.filter(order_id=orders)
+        courseserializer = EnrolledSerializer(course, many=True)
+        
+        return Response(courseserializer.data)
+    
+
+class GetOrders(APIView):
+    def get(self, request, pk):
+        user = User.objects.get(id=pk)
+        
+        order = Order.objects.filter(order_user=user)
+        orderserializer = GetOrderSerializer(order, many=True)
+        print(order)
+        return Response(orderserializer.data)

@@ -76,12 +76,60 @@ class CreareCourse(APIView):
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
+      
             
-
             
             return Response({'msg': 200})
         else :
             return Response({'msg': 404})
+        
+
+class UpdateCourse(ListCreateAPIView):
+    def post(self, request, pk):
+        print(pk)
+        print(request.data)
+        try:
+            queryset = Course.objects.get(id=pk)
+        except:
+            Course.DoesNotExist
+            return Response({'msg': 404})
+        if queryset:
+            print(queryset)
+            
+            cat = request.data.get('category')
+            sub = request.data.get('sub_category')
+            category = Category.objects.get(id=cat)
+            sub_category = SubCat.objects.get(id=sub)
+                        
+            title = request.data.get('title')
+            subtitle = request.data.get('subtitle')
+            description = request.data.get('discription')
+            category = category
+            sub_category = sub_category
+            image = request.data.get('image')
+            video = request.data.get('video')
+            welcomemsg = request.data.get('welcomemsg')
+            endmsg = request.data.get('endmsg')
+            price = request.data.get('saleprice')
+            saleprice = request.data.get('price')
+            
+            queryset.title = title
+            queryset.subtitle = subtitle
+            queryset.description = description
+            queryset.category = category
+            queryset.sub_category = sub_category
+            queryset.image = image
+            queryset.video = video
+            queryset.welcomemsg= welcomemsg
+            queryset.endmsg = endmsg
+            queryset.price = price
+            queryset.saleprice = saleprice
+            
+            queryset.save()
+            
+            return Response({'msg': 200})
+        else:
+            return Response({'msg': 500})
         
 class AddSession(APIView):
     def post(self, request, format=None):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from account.models import User
-from course.models import Course,Category
+from course.models import Course,Category,SubCat
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,16 +14,35 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validate_data):
         return User.objects.create_user(**validate_data)
     
+    
+# class Allcategory(serializers.ModelSerializer):
+#     class Meta:
+#         model: Category
+#         fields = '__all__'
+  
+  
+class AddCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        
+class SubCategory(serializers.ModelSerializer):
+    class Meta:
+        model = SubCat
+        fields = "__all__"
+        
+              
+        
 class CourseSerializer(serializers.ModelSerializer):
+    category = AddCategorySerializer()
+    sub_category = SubCategory()
+    
     class Meta:
         model = Course
         fields = '__all__'
         
         
-class AddCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
+
         
         
 class InstructorCourseSerializer(serializers.ModelSerializer):

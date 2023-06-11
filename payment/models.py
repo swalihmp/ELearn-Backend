@@ -6,6 +6,8 @@ from account.models import User
 class Order(models.Model):
     order_payment_id = models.CharField(max_length=100)
     order_user = models.ForeignKey(User,on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=100)
+    sub_total = models.CharField(max_length=100)
     order_amount = models.CharField(max_length=25)
     isPaid = models.BooleanField(default=False)
     order_date = models.DateField(auto_now=False)
