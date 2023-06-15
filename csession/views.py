@@ -4,10 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from .models import Sessions,Lecture
 from account.models import User
-from course.models import Course
+from course.models import Course,EnrolledCourse
 from .serializers import SessionsSerializer,LectureSerializer,SubCategorySerializer,CreateCourseSerializer,CourseSerializer
 from course.serializers import CreateSubcategory
 from course.models import Category,SubCat
+from payment.serializers import EnrolledSerializer
 
 
 
@@ -85,7 +86,7 @@ class CreareCourse(APIView):
         
 
 class UpdateCourse(ListCreateAPIView):
-    def post(self, request, pk):
+    def patch(self, request, pk):
         print(pk)
         print(request.data)
         try:
@@ -164,13 +165,14 @@ class BlockCourse(APIView):
         
         course.is_active = not course.is_active
         course.save()
+        if course.is_rejected:
+            course.is_rejected = False
+            course.save()
         return Response({'msg': 200})
     
     
 class RejectCourse(APIView):
     def get(self, request, msg,id):
-        print(msg,id)
-        
         
         course = Course.objects.get(id=id)
         
@@ -221,8 +223,12 @@ class CreateSubCategory(APIView):
 class SearchCourse(APIView):
     
     def get(self, request, data):
-        courses = Course.objects.filter(title__icontains=data,is_active=True)
-        serializer = CourseSerializer(courses, many=True)
+        if data=="All":
+            courses = Course.objects.filter(is_active=True)
+            serializer = CourseSerializer(courses, many=True)
+        else:
+            courses = Course.objects.filter(title__icontains=data,is_active=True)
+            serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data) 
     
     
@@ -232,3 +238,51 @@ class Courses(APIView):
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
         
+        
+class MyCourses(APIView):
+    def get(self,request,pk):
+        id = User.objects.get(id=pk)
+        mycourse = EnrolledCourse.objects.filter(user=id)
+        serializer = EnrolledSerializer(mycourse, many=True)
+        return Response(serializer.data)
+    
+
+
+class DeleteCategory(APIView):
+    def get(self, request, pk):
+        category = Category.objects.get(id=pk)
+        category.delete()
+        return Response({'msg': 200})
+
+
+
+class Resubmit(APIView):
+    def get(self, request,id):
+        
+        print(id)
+        course = Course.objects.get(id=id)
+        
+        email = 'swalihmp438368@gmail.com'
+        
+        current_site = get_current_site(request)
+        
+        mail_subject = 'Course Updated....'
+        
+        message = render_to_string('admin_alert2_email.html', {
+            'course': course,
+            'course_name' : course.title,
+            'domain': current_site,
+            'usename': course.user.username,
+        })
+        to_email = email
+        send_email = EmailMessage(mail_subject, message, to=[to_email])
+        send_email.send()
+        
+        return Response({'msg': 200})
+    
+class FilterCategory(APIView):
+    def get(self,request,id):
+        category = Category.objects.get(id=id)
+        courses = Course.objects.filter(category=category,is_active=True)
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data) 

@@ -140,7 +140,7 @@ class handle_payment_success(APIView):
         # orders = Order.objects.get(order_payment_id=ord_id)
         # orderserializer = OrderSerializer(orders)
             
-        # Cart.objects.filter(user=user).delete()
+        Cart.objects.filter(user=user).delete()
         
 
         res_data = {
