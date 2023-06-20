@@ -47,11 +47,16 @@ INSTALLED_APPS = [
     'csession',
     'cart',
     'payment',
+    'learning',
+    # 'chat',
+    # 'channels'
     
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
 ]
+
+# ASGI_APPLICATION = 'backend.asgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cart
+from .models import Cart,Coupon
 from course.serializers import CourseSerializer
 
 
@@ -14,4 +14,9 @@ class GetCartSerializer(serializers.ModelSerializer):
     course = CourseSerializer()
     class Meta:
         model = Cart
+        fields = '__all__'
+        
+class GetCouponView(serializers.ModelSerializer):
+    class Meta:
+        model = Coupon
         fields = '__all__'

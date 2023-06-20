@@ -15,6 +15,11 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validate_data)
     
     
+class UserSerializer1(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','email','discription']
+    
 # class Allcategory(serializers.ModelSerializer):
 #     class Meta:
 #         model: Category

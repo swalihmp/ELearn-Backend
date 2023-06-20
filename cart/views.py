@@ -5,7 +5,7 @@ from .models import Cart,Coupon
 from datetime import datetime
 
 
-from .serializers import AddCartSerializer,GetCartSerializer
+from .serializers import AddCartSerializer,GetCartSerializer,GetCouponView
 
 # Create your views here.
 
@@ -49,7 +49,14 @@ class GetCartView(APIView):
         serializer = GetCartSerializer(cart, many=True)
         
         return Response({'data':serializer.data, 'total':total})
-    
+
+
+class GetCoupon(APIView):
+    def get(self,request):
+        coupons = Coupon.objects.all()
+        serializer = GetCouponView(coupons, many=True) 
+        return Response(serializer.data)
+  
 class RemoveCart(APIView):
     def delete(self, request, pk):
         try:

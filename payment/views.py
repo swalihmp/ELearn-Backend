@@ -9,9 +9,11 @@ from datetime import datetime
 from cart.models import Cart
 from course.models import EnrolledCourse
 import uuid
+from csession.models import Lecture
+from learning.models import Progress
 
 from .models import Order
-from .serializers import OrderSerializer,EnrolledCourseSerializer,EnrolledSerializer,GetOrderSerializer
+from .serializers import OrderSerializer,EnrolledCourseSerializer,EnrolledSerializer,GetOrderSerializer,LearningSerializer
 # Create your views here.
 
 class start_payment(APIView):
@@ -111,21 +113,14 @@ class handle_payment_success(APIView):
         
         client = razorpay.Client(auth=(PUBLIC_KEY, SECRET_KEY))
 
-        # checking if the transaction is valid or not by passing above data dictionary in 
-        # razorpay client if it is "valid" then check will return None
         check = client.utility.verify_payment_signature(data)
 
-        # if check is not None:
-        #     print("Redirect to error url or error page")
-        #     return Response({'error': 'Something went wrong'})
 
-        print(order)
-        # if payment is successful that means check is None then we will turn isPaid=True
         order.isPaid = True
         order.save()
         
         cart_items = Cart.objects.filter(user=user)
-        print(cart_items)
+        
         for item in cart_items:
             course = EnrolledCourse.objects.create(
                 user = user,
@@ -133,6 +128,22 @@ class handle_payment_success(APIView):
                 order_id = order,
             )
             serializer = EnrolledCourseSerializer(course)
+            
+            lectrures = Lecture.objects.filter(course=item.course)
+            first_iteration = True
+            
+            for lecture in lectrures:
+            
+                learning = Progress.objects.create(
+                    user = user,
+                    lecture = lecture ,
+                    current_course = course ,
+                    is_active = first_iteration ,
+                )
+                
+                first_iteration =False
+                serializer = LearningSerializer(learning)
+
             
         # courses = EnrolledCourse.objects.filter(order_id=order)
         # serializers = EnrolledSerializer(courses, many=True)
@@ -174,7 +185,7 @@ class GetOrders(APIView):
     def get(self, request, pk):
         user = User.objects.get(id=pk)
         
-        order = Order.objects.filter(order_user=user)
+        order = Order.objects.filter(order_user=user).order_by('order_date')
         orderserializer = GetOrderSerializer(order, many=True)
         print(order)
         return Response(orderserializer.data)

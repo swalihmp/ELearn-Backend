@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from .serializers import UserSerializer,CourseSerializer,AddCategorySerializer,InstructorCourseSerializer
+from .serializers import UserSerializer,CourseSerializer,AddCategorySerializer,InstructorCourseSerializer,UserSerializer1
 from account.models import User
 from course.models import Course,Category,SubCat
 from course.serializers import CategorySerializer,SubcategorySerializer
@@ -150,6 +150,16 @@ def reset_validate(request, uidb64, token):
     return Response({'msg': 'Link Expired or Invalid Token'})
 
 
+class GetProfile(APIView):
+    def get(self, request, pk):
+        user = User.objects.filter(id=pk)
+        print(user)
+        
+        serializer = UserSerializer1(user,many=True)
+        
+        return Response(serializer.data)
+
+
 class ResetPassword(APIView):
     def post(self, request, format=None):
         
@@ -169,7 +179,46 @@ class ResetPassword(APIView):
     
         return HttpResponseRedirect('http://localhost:3000/reset-password')
     
+class UpdateProfile(APIView):
+    def post(self, request, format=None):
+        user_id = request.data['user_id']
+        current_user = User.objects.get(id=user_id)
+        current_user.first_name = request.data['first_name']
+        current_user.last_name = request.data['last_name']
+        current_user.discription = request.data['discription']
+        current_user.save()
+        return Response({'msg':200})
+    
 
+class ChangePass(APIView):
+    def post(self, request, format=None):
+        oldpassword = request.data['oldpass']
+        password = request.data['password']
+        user_id = request.data['user_id']
+        
+        user = User.objects.get(id=user_id)
+
+        success = user.check_password(oldpassword)
+        if success:
+            user.set_password(password)
+            user.save()
+            print("updated")
+            data = {
+                'msg': 200
+            }
+            return Response(data)
+        else:
+            print("Not done")
+            data = {
+                'msg': 500
+            }
+            return Response(data)
+
+        
+        
+        
+        
+        
 class Listuser(ListCreateAPIView):
     queryset = User.objects.filter(is_admin=False)
     serializer_class = UserSerializer

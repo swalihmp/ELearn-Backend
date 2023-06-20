@@ -4,6 +4,7 @@ from .models import Order
 from course.models import EnrolledCourse
 from account.serializers import UserSerializer
 from course.serializers import CourseSerializer
+from learning.models import Progress
 
 class OrderSerializer(serializers.ModelSerializer):
 
@@ -32,4 +33,11 @@ class GetOrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
+        fields = '__all__'
+        
+
+class LearningSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Progress
         fields = '__all__'
