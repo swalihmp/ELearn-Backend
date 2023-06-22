@@ -2,6 +2,7 @@ from rest_framework import serializers\
     
 from learning.models import Progress,Review
 from csession.serializers import LectureSerializer
+from account.serializers import UserSerializer
 
 
 class ProgressSerializer(serializers.ModelSerializer):
@@ -13,6 +14,13 @@ class ProgressSerializer(serializers.ModelSerializer):
         
 class ReviewSerializer(serializers.ModelSerializer):
     
+    class Meta:
+        model = Review
+        fields = '__all__'
+        
+
+class GetReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = Review
         fields = '__all__'

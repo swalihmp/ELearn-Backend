@@ -33,12 +33,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
+    'chat',
+    
     
     'user',
     'account',
@@ -48,15 +52,11 @@ INSTALLED_APPS = [
     'cart',
     'payment',
     'learning',
-    # 'chat',
-    # 'channels'
     
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
 ]
-
-# ASGI_APPLICATION = 'backend.asgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -145,6 +145,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
+ASGI_APPLICATION = 'backend.routing.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 
 # Database

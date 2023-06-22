@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from course.models import EnrolledCourse
 from csession.models import Lecture
-from .models import Progress
-from .serializers import ProgressSerializer,ReviewSerializer
+from .models import Progress,Review
+from .serializers import ProgressSerializer,ReviewSerializer,GetReviewSerializer
 from course.models import Course
 
 class ProgressView(APIView):
@@ -14,6 +14,15 @@ class ProgressView(APIView):
         lectures = Progress.objects.filter(current_course=course)
         
         serializer = ProgressSerializer(lectures, many=True)
+        return Response(serializer.data)
+    
+class GetReview(APIView):
+    def get(self, request, pk):
+        print(pk)
+        course = Course.objects.get(id=pk)
+        reviews = Review.objects.filter(course=course)
+        
+        serializer = GetReviewSerializer(reviews,many=True)
         return Response(serializer.data)
     
 class AddReview(APIView):

@@ -41,6 +41,7 @@ class SubCategory(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     category = AddCategorySerializer()
     sub_category = SubCategory()
+    user = UserSerializer1()
     
     class Meta:
         model = Course
