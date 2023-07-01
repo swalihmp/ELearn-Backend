@@ -185,7 +185,7 @@ class GetOrders(APIView):
     def get(self, request, pk):
         user = User.objects.get(id=pk)
         
-        order = Order.objects.filter(order_user=user).order_by('order_date')
+        order = Order.objects.filter(order_user=user).order_by('-order_date')
         orderserializer = GetOrderSerializer(order, many=True)
         print(order)
         return Response(orderserializer.data)

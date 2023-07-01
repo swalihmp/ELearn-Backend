@@ -4,13 +4,17 @@ from django.conf import settings
 from . import views
 from .views import Course,Category
 from account.views import Singlecourse,Singleuser,CreateCategory,Singlecat,BlockCat,AllCategory,InstructorCourse,BlockSubcat,PendingCourse,ApprovedCourse
-from csession.views import SubCategory,CreareCourse,AllCourse,BlockCourse,AllSubCategory,CreateSubCategory,RejectCourse,SearchCourse,Courses,UpdateCourse,MyCourses,DeleteCategory,Resubmit,FilterCategory
+from csession.views import SubCategory,CreareCourse,AllCourse,BlockCourse,AllSubCategory,CreateSubCategory,RejectCourse,SearchCourse,Courses,UpdateCourse,MyCourses,DeleteCategory,Resubmit,FilterCategory,AllPendingCourse,RejectedCourse,ActiveCourse
 
 
 urlpatterns = [
     path('course/', Courses.as_view(), name='course'),
     path('search/<str:data>',SearchCourse.as_view(),name='search'),
     path('allcourse/', AllCourse.as_view(), name='allcourse'),
+    path('pending/', AllPendingCourse.as_view(), name='pending'),
+    path('rejected/', RejectedCourse.as_view(), name='rejected'),
+    path('active/', ActiveCourse.as_view(), name='active'),
+    
     path('instructorcourse/<int:pk>',InstructorCourse.as_view(),name='instructorcourse'),
     path('category/',Category.as_view(), name='category'),
     path('allcategory/',AllCategory.as_view(), name='allcategory'),

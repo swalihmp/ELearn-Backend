@@ -11,6 +11,7 @@ class LectureSerializer(serializers.ModelSerializer):
         model = Lecture
         fields = '__all__'
         
+        
 
 class CourseSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -32,6 +33,16 @@ class SubCategorySerializer(serializers.ModelSerializer):
 class CreateCourseSerializer(serializers.ModelSerializer):   
     class Meta:
         model = Course
+        fields = '__all__'
+        
+        
+
+class SingleLectureSerializer(serializers.ModelSerializer):
+    session = SessionsSerializer() 
+    course = CourseSerializer()
+    
+    class Meta:
+        model = Lecture
         fields = '__all__'
   
         

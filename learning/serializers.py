@@ -1,12 +1,12 @@
 from rest_framework import serializers\
     
 from learning.models import Progress,Review
-from csession.serializers import LectureSerializer
+from csession.serializers import LectureSerializer,SingleLectureSerializer
 from account.serializers import UserSerializer
 
 
 class ProgressSerializer(serializers.ModelSerializer):
-    lecture = LectureSerializer()
+    lecture = SingleLectureSerializer()
     
     class Meta:
         model = Progress

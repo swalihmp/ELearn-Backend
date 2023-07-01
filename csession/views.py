@@ -48,6 +48,21 @@ class AllCourse(ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     
+
+class AllPendingCourse(ListCreateAPIView):
+    queryset = Course.objects.filter(is_active = False)
+    serializer_class = CourseSerializer
+    
+    
+class RejectedCourse(ListCreateAPIView):
+    queryset = Course.objects.filter(is_rejected = True)
+    serializer_class = CourseSerializer
+    
+    
+class ActiveCourse(ListCreateAPIView):
+    queryset = Course.objects.filter(is_active = True)
+    serializer_class = CourseSerializer
+    
     
 class CreareCourse(APIView):
     def post(self, request, format=None):
@@ -77,7 +92,6 @@ class CreareCourse(APIView):
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
-      
             
             
             return Response({'msg': 200})
@@ -277,6 +291,9 @@ class Resubmit(APIView):
         to_email = email
         send_email = EmailMessage(mail_subject, message, to=[to_email])
         send_email.send()
+        
+        course.is_requested = True
+        course.save()
         
         return Response({'msg': 200})
     
