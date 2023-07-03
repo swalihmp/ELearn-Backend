@@ -20,3 +20,9 @@ class GetCouponView(serializers.ModelSerializer):
     class Meta:
         model = Coupon
         fields = '__all__'
+        
+# class AddCouponSerializer(serializers.ModelSerializer):
+    
+#     class Meta:
+#         model = Coupon
+#         fields = '__all__'

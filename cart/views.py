@@ -105,3 +105,25 @@ class ApplyCoupon(APIView):
    
         # print(coupon,total)
         # return Response({'msg': 200})
+        
+        
+        
+class CreateCoupon(APIView):
+    def post(self, request, format=None):
+        serializer = GetCouponView(data=request.data)
+        print(request.data)
+        is_valid = serializer.is_valid()
+        print(serializer.errors)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg': 200})
+        else :
+            return Response({'msg': 404})
+        
+        
+class DeleteCoupon(APIView):
+    def get(self, request, pk):
+        coupon = Coupon.objects.get(id=pk)
+        coupon.delete()
+        return Response({'msg': 200})
