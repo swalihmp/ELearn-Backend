@@ -179,6 +179,20 @@ class ResetPassword(APIView):
     
         return HttpResponseRedirect('http://localhost:3000/reset-password')
     
+    
+class ChangeImage(APIView):
+    def post(self,request, format=None):
+        print(request.data)
+        current_user = request.data.get('user')
+        user = User.objects.get(id=current_user)
+        image = request.data.get('image')
+        
+        user.image = image
+        user.save()
+        
+        return Response({'msg':200})
+    
+    
 class UpdateProfile(APIView):
     def post(self, request, format=None):
         user_id = request.data['user_id']

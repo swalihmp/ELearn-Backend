@@ -44,6 +44,7 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.CharField(max_length=100, unique=True)
     discription = models.CharField(max_length=500,null=True)
+    image = models.ImageField(null=True,upload_to='photos/account')
     
     
     date_joined = models.DateTimeField(auto_now_add=True)
